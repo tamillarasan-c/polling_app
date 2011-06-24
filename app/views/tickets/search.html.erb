@@ -1,0 +1,19 @@
+
+<p> 
+  Searching ...
+</p>
+<div id="progressbar" style="width:25%"> </div>
+<p>
+  <span id="progress"><%= @search_status ||= 0.0 %></span>% Complete
+</p>
+
+<script type="text/javascript">
+	function update_progressbar() {
+		$("#progressbar").progressbar({
+			value: parseInt($("#progress").html())
+		});				
+	}
+</script>
+<%= render :partial => "tickets/http_poll_script" if session[:page] == 'http' %>
+<%= render :partial => "tickets/ajax_poll_script" if session[:page] == 'ajax' %>
+<%= render :partial => "tickets/websocket_script" if session[:page] == 'websocket' %>

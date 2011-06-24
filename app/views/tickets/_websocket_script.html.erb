@@ -1,0 +1,19 @@
+<script type="text/javascript">
+	(function(){
+		var location = 'ws://<%= request.host_with_port %>/search_status';
+		var ws = new WebSocket(location);
+		ws.onopen = function(evt) {
+			ws.send("<%= session[:search_thread_id]%>")	
+		};
+		ws.onmessage=function(evt) {
+			$("span#progress").html(evt.data)
+			update_progressbar();
+			if(parseInt(evt.data) > 99 ){
+				ws.close();
+				window.location = "result";
+			}			
+		}
+	})();	  
+</script>
+
+

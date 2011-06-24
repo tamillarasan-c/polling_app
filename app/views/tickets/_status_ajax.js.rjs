@@ -1,0 +1,7 @@
+if @search_status >= Ticket::SEARCH_STATUS_COMPLETE   
+   page.redirect_to "result"
+else
+   page['span#progress'].html @search_status
+   page.call('update_progressbar')
+end
+

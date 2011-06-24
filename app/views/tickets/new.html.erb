@@ -1,0 +1,13 @@
+<h1 align="center">Polling demo using <%=session[:page]%> </h1>
+<%= form_tag("search", :method => :post) do %>
+<%= label_tag "From" %><br/>
+<%= text_field_tag "from"%><br/>
+<%= label_tag "To" %><br/>
+<%= text_field_tag "to"%><br/>
+<%= label_tag "Date" %><br/>
+<%= text_field_tag "date"%><br/>
+
+<%= submit_tag "Search" %>
+<% end %>
+
+<span id="progress"></span>

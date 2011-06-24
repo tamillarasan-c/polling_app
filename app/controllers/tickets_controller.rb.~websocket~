@@ -1,0 +1,49 @@
+class TicketsController < ApplicationController
+
+  def index
+    session[:page]=nil
+  end
+  
+  def new    
+    session[:search_thread_id] = nil
+    session[:page]=params[:page]
+  end  
+
+  def search
+    if session[:search_thread_id].nil?
+      session[:search_thread_id] = start_searching
+    else    
+      begin
+        search_thread = ObjectSpace._id2ref(session[:search_thread_id])
+        @search_status=(search_thread[:current_status].nil?)? 0 : search_thread[:current_status] 
+      rescue RangeError
+        search_thread=nil
+        @search_status=100
+      ensure
+        respond_to do |format|          
+          format.js { render :partial => "tickets/status_ajax" }
+          format.html {render :action => "result" if @search_status > 99 }
+	end
+      end 
+    end
+  end
+  
+  def result
+    
+  end
+
+  private
+  
+  def start_searching
+    search_thread = Thread.new {
+      redis = EM::Protocols::Redis.connect
+      (0..Ticket::SEARCH_TIME).each do |search_time|
+        percentage_complete = (search_time/Ticket::SEARCH_TIME) * 100
+        Thread.current[:current_status] = percentage_complete
+        redis.set "#{Thread.current.object_id}:status", percentage_complete
+        sleep 1
+      end
+    }  
+    search_thread.object_id
+  end  
+end
